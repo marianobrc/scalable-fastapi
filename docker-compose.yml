@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+  api:
+    build: &api-image
+      context: .
+      dockerfile: ./Dockerfile
+      target: dev
+    restart: always
+    volumes: &code
+      - ./:/home/web/code
+    ports:
+      - "8080:8080"
