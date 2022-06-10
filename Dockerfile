@@ -46,4 +46,4 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
 # Define an image for production. Inherits common packages from the base stage.
 FROM base as prod
 # The production server starts by default when the container starts
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
