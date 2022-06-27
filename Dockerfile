@@ -13,26 +13,37 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
   build-essential \
   # postgress client (psycopg2) dependencies
   # libpq-dev \
+  curl \
   # cleaning up unused files to reduce the image size
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+
 # Switch to the non-root user
 USER web
+# Install the poetry for python dependency management
+# https://python-poetry.org/docs/master/#installation
+ENV POETRY_VERSION=1.1.13
+RUN curl -sSL https://install.python-poetry.org | python3 - --version "$POETRY_VERSION"
+# See "Add Poetry to your PATH" in https://python-poetry.org/docs/master/#installing-with-the-official-installer
+ENV PATH="/root/.local/bin:$PATH"
 # Create a directory for the source code and use it as base path
 WORKDIR /home/web/code/
-# Copy the python depencencies list for pip
-COPY --chown=web:web ./requirements.txt requirements.txt
-# Switch to the root user temporary, to grant execution permissions.
-USER root
+# Copy the python depencencies list for poetry
+COPY --chown=web:web poetry.lock pyproject.toml ./
 # Install python packages at system level
-RUN pip install --no-cache-dir -r requirements.txt
+RUN /bin/true\
+    && poetry config virtualenvs.create false \
+    && poetry install --no-interaction \
+    && rm -rf /root/.cache/pypoetry
+# Switch to the root user temporary, to grant execution permissions.
+#USER root
 # Copy entrypoint script which waits for the db to be ready
 #COPY --chown=web:web ./docker/app/entrypoint.sh /usr/local/bin/entrypoint.sh
 #RUN chmod +x /usr/local/bin/entrypoint.sh
 # Copy the scripts that starts the default worker
 # COPY --chown=web:web ./docker/app/start-celery-worker.sh /usr/local/bin/start-celery-worker.sh
 # RUN chmod +x /usr/local/bin/start-celery-worker.sh
-USER web
+# USER web
 # This script will run before every command executed in the container
 # ENTRYPOINT ["entrypoint.sh"]
 
