@@ -30,11 +30,6 @@ ENV PATH="/root/.local/bin:$PATH"
 WORKDIR /home/web/code/
 # Copy the python depencencies list for poetry
 COPY --chown=web:web poetry.lock pyproject.toml ./
-# Install python packages at system level
-RUN /bin/true\
-    && poetry config virtualenvs.create false \
-    && poetry install --no-interaction \
-    && rm -rf /root/.cache/pypoetry
 # Switch to the root user temporary, to grant execution permissions.
 #USER root
 # Copy entrypoint script which waits for the db to be ready
@@ -50,11 +45,19 @@ RUN /bin/true\
 
 # Define an image for local development. Inherits common packages from the base stage.
 FROM base as dev
+# Install python packages at system level, including development dependencies
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction
 # The development server starts by default when the container starts
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
 
 
 # Define an image for production. Inherits common packages from the base stage.
 FROM base as prod
+# Install python packages at system level, without development dependencies
+RUN /bin/true\
+    && poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-dev \
+    && rm -rf /root/.cache/pypoetry
 # The production server starts by default when the container starts
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
