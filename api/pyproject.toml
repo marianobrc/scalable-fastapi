@@ -8,6 +8,8 @@ authors = ["marianobrc <marianomartinez84@gmail.com>"]
 python = "^3.10.2"
 fastapi = "^0.78.0"
 uvicorn = "^0.17.6"
+pytest = "^7.1.2"
+requests = "^2.28.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
