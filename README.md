@@ -1,6 +1,8 @@
 # scalable-fastapi
 An example of scalable fast-api service in AWS with Docker and CDK
 
+The application code is in `api/`.
+
 # Welcome to your CDK Python project!
 
 This is a blank project for CDK development with Python.
