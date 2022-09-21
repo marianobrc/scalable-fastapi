@@ -63,7 +63,7 @@ app = FastAPI()
 router = InferringRouter()  # Step 1: Create a router
 
 
-@app.get("/")
+@app.get("/status/")
 async def root():
     return {"status": "ok"}
 

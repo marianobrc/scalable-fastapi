@@ -6,6 +6,8 @@ backend/.env
 .venv
 .venv*
 .idea
+.idea/
+.idea/workspace.xml
 *.egg-info
 *.sqlite3
 .env
