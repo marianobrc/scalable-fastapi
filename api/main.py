@@ -100,11 +100,11 @@ class ItemCBV:
         return ItemInDB.from_orm(item_orm)
 
     @router.delete("/api/v1/items/{item_id}",  status_code=204)
-    def delete_item(self, item_id: ItemID) -> APIMessage:
+    def delete_item(self, item_id: ItemID) -> None:
         item = get_owned_item(self.session, self.user_id, item_id)
         self.session.delete(item)
         self.session.commit()
-        return APIMessage(detail=f"Deleted item {item_id}")
+        return None
 
 
 app.include_router(router)
