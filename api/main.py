@@ -74,11 +74,11 @@ class ItemCBV:
     session: Session = Depends(get_db)
     user_id: UserID = Depends(get_jwt_user)
 
-    @router.get("/items")
+    @router.get("/api/v1/items")
     def list_items(self) -> List[ItemInDB]:
         return get_items(self.session)
 
-    @router.post("/items")
+    @router.post("/api/v1/items")
     def create_item(self, item: ItemCreate) -> ItemInDB:
         # Step 4: Use `self.<dependency_name>` to access shared dependencies
         item_orm = ItemORM(name=item.name, owner=self.user_id)
@@ -86,12 +86,12 @@ class ItemCBV:
         self.session.commit()
         return ItemInDB.from_orm(item_orm)
 
-    @router.get("/items/{item_id}")
+    @router.get("/api/v1/items/{item_id}")
     def read_item(self, item_id: ItemID) -> ItemInDB:
         item_orm = get_owned_item(self.session, self.user_id, item_id)
         return ItemInDB.from_orm(item_orm)
 
-    @router.put("/items/{item_id}")
+    @router.put("/api/v1/items/{item_id}")
     def update_item(self, item_id: ItemID, item: ItemCreate) -> ItemInDB:
         item_orm = get_owned_item(self.session, self.user_id, item_id)
         item_orm.name = item.name
@@ -99,7 +99,7 @@ class ItemCBV:
         self.session.commit()
         return ItemInDB.from_orm(item_orm)
 
-    @router.delete("/items/{item_id}")
+    @router.delete("/api/v1/items/{item_id}")
     def delete_item(self, item_id: ItemID) -> APIMessage:
         item = get_owned_item(self.session, self.user_id, item_id)
         self.session.delete(item)
